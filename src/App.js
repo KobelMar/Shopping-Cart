@@ -1,23 +1,35 @@
- import { useEffect } from "react";
- import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
-
-import Cart from './components/Cart/Cart';
-import Layout from './components/Layout/Layout';
-import Products from './components/Shop/Products';
+import Cart from "./components/Cart/Cart";
+import Layout from "./components/Layout/Layout";
+import Products from "./components/Shop/Products";
+import { uiActions } from "./store/ui-slice";
 
 function App() {
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart);
+  const cartIsVisible = useSelector((state) => state.ui.cartIsVisible);
 
-const cartIsVisible = useSelector(state => state.ui.cartIsVisible )
-const cart = useSelector(state => state.cart )
+  useEffect(() => {
+    const sendCartData = async () => {
+      dispatch(uiActions.showNotification({}))
+      const response = await fetch(
+        "https://react-reduxshoppingcart-default-rtdb.europe-west1.firebasedatabase.app/cart.json",
+        {
+          method: "PUT",
+          body: JSON.stringify(cart),
+        }
+      );
+      const responseData = await response.json();
+    };
 
+    if (!response.ok) {
+      throw new Error("Sending cart data failed.");
+    }
 
-useEffect(()=>{
-  fetch("https://react-reduxshoppingcart-default-rtdb.europe-west1.firebasedatabase.app/cart.json", {
-    method: "PUT", body: JSON.stringify(cart)
-  })
-}, [cart])
-
+    sendCartData();
+  }, [cart]);
 
   return (
     <Layout>
