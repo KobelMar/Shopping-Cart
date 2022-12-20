@@ -14,7 +14,7 @@ const uiSlice = createSlice({
         message: action.payload.message,
       };
     },
-  },
+  }, 
 });
 
 export const uiActions = uiSlice.actions;

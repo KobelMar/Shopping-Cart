@@ -1,9 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { uiActions } from "./ui-slice";
 
 const cartSlice = createSlice({
   name: "cart",
-  initialState: { items: [], totalQuantity: 0 },
+  initialState: { items: [], totalQuantity: 0, cartChanged: false },
   reducers: {
     replaceCart(state, action) {
       state.totalQuantity = action.payload.totalQuantity;
@@ -25,6 +24,7 @@ const cartSlice = createSlice({
         existingItem.totalPrice = existingItem.totalPrice + existingItem.price;
       }
       state.totalQuantity++;
+      state.cartChanged = true;
     },
     removeItemToCart(state, action) {
       const id = action.payload;
@@ -36,57 +36,12 @@ const cartSlice = createSlice({
         existingItem.totalPrice = existingItem.totalPrice - existingItem.price;
       }
       state.totalQuantity--;
+      state.cartChanged = true;
     },
   },
 });
 
-export const sendCartData = (cart) => {
-  return async (dispatch) => {
-    dispatch(
-      uiActions.showNotification({
-        status: "pending",
-        title: "Sending...",
-        message: "Sending cart data.",
-      })
-    );
 
-    const sendRequest = async () => {
-      const response = await fetch(
-        "https://react-reduxshoppingcart-default-rtdb.europe-west1.firebasedatabase.app/cart.json",
-        {
-          method: "PUT",
-          body: JSON.stringify(cart),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error();
-      }
-    };
-
-    try {
-      await sendRequest();
-
-      setTimeout(() => {
-        dispatch(
-          uiActions.showNotification({
-            status: "success",
-            title: "Success...",
-            message: "Sendt cart data successfully.",
-          })
-        );
-      }, 400);
-    } catch (e) {
-      dispatch(
-        uiActions.showNotification({
-          status: "error",
-          title: "Error...",
-          message: "Sending cart data failed.",
-        })
-      );
-    }
-  };
-};
 
 export const cartActions = cartSlice.actions;
 export default cartSlice;
