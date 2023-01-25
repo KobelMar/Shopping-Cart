@@ -1,4 +1,6 @@
 
 node_modules/
-package-lock.json
-package.json
+firebase.json
+.firebaserc
+build/
+.firebase/
